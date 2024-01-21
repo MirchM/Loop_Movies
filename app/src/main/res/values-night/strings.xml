@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="movie_image_placeholder_fallback">Movie Image</string>
+    <string name="see_all">See all</string>
+    <string name="movie_detail_screen_release_and_duration">%1$s  ·  %2$sh %3$sm</string>
+</resources>
