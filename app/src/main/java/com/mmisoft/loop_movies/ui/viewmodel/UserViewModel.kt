@@ -106,9 +106,15 @@ class UserViewModel @Inject constructor(
     fun fetchUser() =
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedUser = repository.fetchUser()
-            fetchedUser.first?.let { userName ->
+            if (fetchedUser.second != null) {
                 fetchedUser.second?.let { favouriteMoves ->
-                    _user.postValue(User(userName, deserializeListOfIntegers(favouriteMoves)))
+                    fetchedUser.first?.let { userName ->
+                        _user.postValue(User(userName, deserializeListOfIntegers(favouriteMoves)))
+                    }
+                }
+            } else {
+                fetchedUser.first?.let { userName ->
+                    _user.postValue(_user.value?.favouriteMovies?.let { User(userName, it) })
                 }
             }
         }

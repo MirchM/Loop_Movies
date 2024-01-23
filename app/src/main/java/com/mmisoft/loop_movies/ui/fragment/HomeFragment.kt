@@ -55,7 +55,7 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         userViewModel.checkIfUserLoggedIn()
         if (userViewModel.authenticationState.value != AuthenticationState.Authenticated) {
             findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
-        }else{
+        } else {
             setStoredProfileImage()
         }
 
