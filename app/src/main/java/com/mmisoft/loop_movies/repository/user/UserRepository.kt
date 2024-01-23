@@ -9,4 +9,6 @@ interface UserRepository {
     suspend fun saveUserName(userName: String)
 
     suspend fun saveFavouriteMovies(serializedList: String)
+
+    suspend fun fetchUser(): Pair<String?, String?>
 }

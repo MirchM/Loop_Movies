@@ -60,7 +60,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun getUserName() =
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             repository.getUserName()?.let { userName ->
                 _user.value?.let { user ->
                     _user.postValue(User(userName, user.favouriteMovies))
@@ -93,6 +93,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
+
     fun getUserFavouriteMovies() =
         viewModelScope.launch(Dispatchers.IO) {
             repository.getUserFavouriteMovies()?.let { favouriteMovies ->
@@ -102,6 +103,15 @@ class UserViewModel @Inject constructor(
             }
         }
 
+    fun fetchUser() =
+        viewModelScope.launch(Dispatchers.IO) {
+            val fetchedUser = repository.fetchUser()
+            fetchedUser.first?.let { userName ->
+                fetchedUser.second?.let { favouriteMoves ->
+                    _user.postValue(User(userName, deserializeListOfIntegers(favouriteMoves)))
+                }
+            }
+        }
 
     // Helpers for storing the list of favourite Movies
     private fun deserializeListOfIntegers(serializedList: String): List<Int> {

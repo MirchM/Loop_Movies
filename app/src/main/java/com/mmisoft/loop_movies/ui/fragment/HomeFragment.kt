@@ -87,17 +87,14 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         userViewModel.user.observe(viewLifecycleOwner) { user ->
             verticalAdapter.setBookmarkedMovies(user.favouriteMovies)
             movieViewModel.searchBookmarkedMovies(user.favouriteMovies)
+            binding.userName.text = user.name
         }
         movieViewModel.bookmarkedMovies.observe(viewLifecycleOwner) {
             horizontalRecyclerViewAdapter.setData(it)
         }
 
-        // initialise user name
-        binding.userName.text = userViewModel.user.value?.name
-        //userViewModel.getUserName()
-
-        //userViewModel.user.value?.favouriteMovies?.let { verticalAdapter.setBookmarkedMovies(it) }
-        //userViewModel.user.value?.favouriteMovies?.let { movieViewModel.searchBookmarkedMovies(it) }
+        // Gets the last saved instance of the User from the Datastore
+        userViewModel.fetchUser()
 
         return binding.root
     }

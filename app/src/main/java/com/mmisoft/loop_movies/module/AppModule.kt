@@ -1,6 +1,7 @@
 package com.mmisoft.loop_movies.module
 
 import android.content.Context
+import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModelProvider
 import com.mmisoft.loop_movies.repository.user.UserDataStoreRepositoryImpl
 import com.mmisoft.loop_movies.repository.user.UserRepository
@@ -21,4 +22,5 @@ class AppModule {
     fun provideUserDataStoreRepository(
         @ApplicationContext app: Context
     ): UserRepository = UserDataStoreRepositoryImpl(app)
+
 }

@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
 
 
         movieViewModel.fetchMovies()
-        userViewModel.getUserFavouriteMovies()
-        userViewModel.user.value?.favouriteMovies?.let { movieViewModel.searchBookmarkedMovies(it) }
+        //userViewModel.getUserFavouriteMovies()
+        //userViewModel.user.value?.favouriteMovies?.let { movieViewModel.searchBookmarkedMovies(it) }
     }
 
     override fun onStart() {

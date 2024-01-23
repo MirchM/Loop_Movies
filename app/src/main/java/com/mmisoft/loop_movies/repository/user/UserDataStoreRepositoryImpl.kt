@@ -56,4 +56,10 @@ class UserDataStoreRepositoryImpl @Inject constructor(private val context: Conte
             preferences[favouriteMoviesKey] = serializedList
         }
     }
+
+    override suspend fun fetchUser(): Pair<String?, String?> {
+        return Pair(getUserName(), getUserFavouriteMovies())
+    }
+
+
 }
