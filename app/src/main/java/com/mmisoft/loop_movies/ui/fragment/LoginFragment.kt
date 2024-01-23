@@ -21,12 +21,6 @@ import com.mmisoft.loop_movies.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
-
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 

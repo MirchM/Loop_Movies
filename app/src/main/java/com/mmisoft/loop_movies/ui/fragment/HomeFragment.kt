@@ -25,16 +25,7 @@ import com.mmisoft.loop_movies.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 @AndroidEntryPoint
 class HomeFragment : Fragment(), RecyclerViewClickListener {
 
@@ -51,7 +42,6 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         }
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,19 +49,16 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        //movieViewModel.fetchMovies()
-        // User Data
 
-        userViewModel.user.observe(viewLifecycleOwner, Observer { user ->
-            binding.userName.text = user.name
-        })
-        setStoredProfileImage()
 
         // Firebase Login
         userViewModel.checkIfUserLoggedIn()
         if (userViewModel.authenticationState.value != AuthenticationState.Authenticated) {
             findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+        }else{
+            setStoredProfileImage()
         }
+
 
         binding.searchAllMoviesButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
@@ -97,15 +84,20 @@ class HomeFragment : Fragment(), RecyclerViewClickListener {
         movieViewModel.staffPicks.observe(viewLifecycleOwner) {
             verticalAdapter.setMovies(it)
         }
-        userViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+        userViewModel.user.observe(viewLifecycleOwner) { user ->
             verticalAdapter.setBookmarkedMovies(user.favouriteMovies)
             movieViewModel.searchBookmarkedMovies(user.favouriteMovies)
-
-        })
+        }
         movieViewModel.bookmarkedMovies.observe(viewLifecycleOwner) {
             horizontalRecyclerViewAdapter.setData(it)
         }
 
+        // initialise user name
+        binding.userName.text = userViewModel.user.value?.name
+        //userViewModel.getUserName()
+
+        //userViewModel.user.value?.favouriteMovies?.let { verticalAdapter.setBookmarkedMovies(it) }
+        //userViewModel.user.value?.favouriteMovies?.let { movieViewModel.searchBookmarkedMovies(it) }
 
         return binding.root
     }

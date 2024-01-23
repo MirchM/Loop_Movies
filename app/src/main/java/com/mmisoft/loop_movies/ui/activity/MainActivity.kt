@@ -2,6 +2,7 @@ package com.mmisoft.loop_movies.ui.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -29,13 +30,9 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
 
-        userViewModel.authenticationState.observe(this) {
-            Log.d("AuthenticationState - Main", userViewModel.authenticationState.value.toString())
-        }
-        userViewModel.getUserName()
-        userViewModel.getUserFavouriteMovies()
-
         movieViewModel.fetchMovies()
+        userViewModel.getUserFavouriteMovies()
+        userViewModel.user.value?.favouriteMovies?.let { movieViewModel.searchBookmarkedMovies(it) }
     }
 
     override fun onStart() {

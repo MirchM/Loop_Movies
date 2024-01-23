@@ -56,15 +56,17 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             repository.saveUserName(newUserName)
         }
+        getUserName()
     }
 
-    fun getUserName() = runBlocking {
-        repository.getUserName()?.let { userName ->
-            _user.value?.let { user ->
-                _user.postValue(User(userName, user.favouriteMovies))
+    fun getUserName() =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getUserName()?.let { userName ->
+                _user.value?.let { user ->
+                    _user.postValue(User(userName, user.favouriteMovies))
+                }
             }
         }
-    }
 
     fun saveUserFavouriteMovies(newBookmarkedMovie: Int) {
         viewModelScope.launch {
@@ -91,13 +93,14 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun getUserFavouriteMovies() = runBlocking {
-        repository.getUserFavouriteMovies()?.let { favouriteMovies ->
-            _user.value?.let { user ->
-                _user.postValue(User(user.name, deserializeListOfIntegers(favouriteMovies)))
+    fun getUserFavouriteMovies() =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getUserFavouriteMovies()?.let { favouriteMovies ->
+                _user.value?.let { user ->
+                    _user.postValue(User(user.name, deserializeListOfIntegers(favouriteMovies)))
+                }
             }
         }
-    }
 
 
     // Helpers for storing the list of favourite Movies
