@@ -10,7 +10,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mmisoft.loop_movies.R
-import com.mmisoft.loop_movies.data.datamodel.Movie
+import com.mmisoft.loop_movies.data.model.remote.Movie
 import com.mmisoft.loop_movies.databinding.MovieDetailBottomSheetFullscreenBinding
 import com.mmisoft.loop_movies.ui.components.MovieGenreCardView
 import java.math.BigDecimal
@@ -19,7 +19,7 @@ import java.text.DecimalFormat
 import java.util.Locale
 
 
-class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialogFragment() {
+class FullscreenModalMovieBottomSheetDialog(val movie: Movie, private var isBookmarked: Boolean, val onBookmarkClick: ()->Unit) : BottomSheetDialogFragment() {
     private lateinit var binding: MovieDetailBottomSheetFullscreenBinding
 
     override fun onCreateView(
@@ -35,6 +35,14 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
             dismiss()
         }
 
+        setBookmarkResource()
+
+        binding.bookmark.setOnClickListener{
+            onBookmarkClick()
+            isBookmarked = !isBookmarked
+            setBookmarkResource()
+        }
+
         // Movie Image
         val options: RequestOptions = RequestOptions()
             .centerCrop()
@@ -48,39 +56,32 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
 
         // Movie Rating Component
         val movieRating = binding.movieRating
-        movie.rating?.let { movieRating.setRating(it) }
+        movie.rating.let { movieRating.setRating(it) }
 
         // Movie Release Date and Duration
-        binding.movieReleaseAndDuration.text =
-            getString(
-                R.string.movie_detail_screen_release_and_duration,
-                movie.releaseDate,
-                movie.runtime?.div(60).toString(),
-                movie.runtime?.rem(60).toString()
-            )
+        binding.movieReleaseAndDuration.text = getString(
+            R.string.movie_detail_screen_release_and_duration,
+            movie.releaseDate.replace('-', '.'),
+            movie.runtime.div(60).toString(),
+            movie.runtime.rem(60).toString()
+        )
 
 
         // Movie Title
-        if (movie.releaseDate != null) {
-            binding.movieTitle.text = buildString {
-                append(movie.title)
-                append(
-                    getString(
-                        R.string.movie_detail_screen_title_and_release_year,
-                        movie.releaseDate.take(4)
-                    )
-                )
-            }
-        } else {
-            binding.movieTitle.text = movie.title
-        }
+        binding.movieTitle.text = movie.title
+
+        // Movie Release Year
+        binding.movieReleaseYear.text =
+            getString(R.string.movie_detail_screen_release_year, movie.releaseDate.take(4))
+
 
         // Movie Genre Cards
         val genreCards = binding.movieGenreCardHolder
-        movie.genres?.let { movieGenres ->
+        movie.genres.let { movieGenres ->
             for (movieGenre in movieGenres) {
                 val newCard = this.context?.let { MovieGenreCardView(it, null) }
                 newCard?.setText(movieGenre)
+                newCard?.cardElevation = 0f
                 genreCards.addView(newCard)
             }
         }
@@ -91,15 +92,15 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
 
         // Movie Key Facts
         val budgetFact = binding.movieBudgetCard
-        movie.budget?.let { budgetFact.setText("Budget", "${formatNumber(it)}$") }
+        movie.budget.let { budgetFact.setText("Budget", "${formatNumber(it)}$") }
         budgetFact.cardElevation = 0f
 
         val revenueFact = binding.movieRevenueCard
-        movie.revenue?.let { revenueFact.setText("Revenue", "${formatNumber(it)}$") }
+        movie.revenue.let { revenueFact.setText("Revenue", "${formatNumber(it)}$") }
         revenueFact.cardElevation = 0f
 
         val languageFact = binding.movieOriginalLanguageCard
-        movie.language?.let {
+        movie.language.let {
             languageFact.setText(
                 "Original Language",
                 languageCodeToLanguageName(it)
@@ -108,7 +109,7 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
         languageFact.cardElevation = 0f
 
         val ratingFact = binding.movieRatingCard
-        movie.rating?.let {
+        movie.rating.let {
             ratingFact.setText(
                 "Rating",
                 "${roundUpRating(it)} (${movie.reviews})"
@@ -144,7 +145,15 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
         }
     }
 
-    private fun formatNumber(numberToFormat: Int): String {
+    private fun setBookmarkResource(){
+        if(isBookmarked){
+            binding.bookmark.setImageResource(R.drawable.bookmark_filled)
+        }else{
+            binding.bookmark.setImageResource(R.drawable.bookmark_empty)
+        }
+    }
+
+    private fun formatNumber(numberToFormat: Long): String {
         val formatter = DecimalFormat("#,###")
         return formatter.format(numberToFormat).replace(",", ".")
     }
@@ -156,4 +165,5 @@ class FullscreenModalMovieBottomSheetDialog(val movie: Movie) : BottomSheetDialo
 
     private fun roundUpRating(rating: Double): Double =
         BigDecimal(rating).setScale(2, RoundingMode.HALF_UP).toDouble()
+
 }

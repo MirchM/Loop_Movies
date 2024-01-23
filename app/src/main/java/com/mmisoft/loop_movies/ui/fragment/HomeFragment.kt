@@ -1,16 +1,29 @@
 package com.mmisoft.loop_movies.ui.fragment
 
+import android.annotation.SuppressLint
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mmisoft.loop_movies.data.datamodel.Movie
-import com.mmisoft.loop_movies.data.datamodel.RecyclerViewDataItem
+import com.mmisoft.loop_movies.R
+import com.mmisoft.loop_movies.data.model.remote.AuthenticationState
 import com.mmisoft.loop_movies.databinding.FragmentHomeBinding
-import com.mmisoft.loop_movies.ui.recyclerview.adapter.RecyclerViewHorizontalAdapter
 import com.mmisoft.loop_movies.ui.dialog.FullscreenModalMovieBottomSheetDialog
+import com.mmisoft.loop_movies.ui.recyclerview.RecyclerViewClickListener
+import com.mmisoft.loop_movies.ui.recyclerview.adapter.RecyclerViewHorizontalAdapter
+import com.mmisoft.loop_movies.ui.recyclerview.adapter.RecyclerViewVerticalMovieAdapter
+import com.mmisoft.loop_movies.ui.viewmodel.MovieViewModel
+import com.mmisoft.loop_movies.ui.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,100 +35,119 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+@AndroidEntryPoint
+class HomeFragment : Fragment(), RecyclerViewClickListener {
 
-    private var binding: FragmentHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
+    private val movieViewModel: MovieViewModel by activityViewModels()
+
+    private val userViewModel: UserViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        //movieViewModel.fetchMovies()
+        // User Data
+
+        userViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            binding.userName.text = user.name
+        })
+        setStoredProfileImage()
 
         // Firebase Login
+        userViewModel.checkIfUserLoggedIn()
+        if (userViewModel.authenticationState.value != AuthenticationState.Authenticated) {
+            findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+        }
 
-        //findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+        binding.searchAllMoviesButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchFragment)
+        }
 
         // RecyclerView
-        val recyclerView = binding!!.horizontalMovieImageRecyclerview
+        val recyclerView = binding.horizontalMovieImageRecyclerview
         val horizontalLayoutManager =
             LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.layoutManager = horizontalLayoutManager
-        val adapter = RecyclerViewHorizontalAdapter()
-        adapter.setData(
-            listOf(
-                RecyclerViewDataItem.ImageViewItem("https://image.tmdb.org/t/p/w500/x21s3p5wPww534nYj1cWakTcqz4.jpg"),
-                RecyclerViewDataItem.ImageViewItem("https://image.tmdb.org/t/p/w500/vQtBqpF2HDdzbfXHDzR4u37i1Ac.jpg"),
-                RecyclerViewDataItem.ButtonItem {
-                    val fullScreenMovieDetail =
-                        FullscreenModalMovieBottomSheetDialog(
-                            Movie(
-                            rating = 3.9870000000000005,
-                            id = 530915,
-                            revenue = 374733942,
-                            releaseDate = "2019-12-25",
-                            director = null,
-                            posterUrl = "https://image.tmdb.org/t/p/w500/iZf0KyrE25z1sage4SYFLCCrMi9.jpg",
-                            cast = null,
-                            runtime = 119,
-                            title = "1917",
-                            overview = "At the height of the First World War, two young British soldiers must cross enemy territory and deliver a message that will stop a deadly attack on hundreds of soldiers.",
-                            reviews = 9932,
-                            budget = 100000000,
-                            language = "en",
-                            genres = arrayListOf("War", "Drama", "Action", "Thriller", "History")
-                        )
-                        )
-                    parentFragmentManager.let {
-                        fullScreenMovieDetail.show(
-                            it,
-                            "fullScreenMovieDetailDialog"
-                        )
-                    }
-                }
-            )
-        )
-        recyclerView.adapter = adapter
+        val horizontalRecyclerViewAdapter = RecyclerViewHorizontalAdapter(this)
+        horizontalRecyclerViewAdapter.setData(listOf())
+        recyclerView.adapter = horizontalRecyclerViewAdapter
 
-        //binding?.searchAllMoviesButton?.elevation = 0f
 
-        return binding?.root
+        val verticalRecyclerView = binding.staffPicksRecyclerview
+        val layoutManager = LinearLayoutManager(this.context)
+        verticalRecyclerView.layoutManager = layoutManager
+        val verticalAdapter = RecyclerViewVerticalMovieAdapter(this)
+        verticalRecyclerView.adapter = verticalAdapter
+        verticalAdapter.setMovies(listOf())
+
+        movieViewModel.staffPicks.observe(viewLifecycleOwner) {
+            verticalAdapter.setMovies(it)
+        }
+        userViewModel.user.observe(viewLifecycleOwner, Observer { user ->
+            verticalAdapter.setBookmarkedMovies(user.favouriteMovies)
+            movieViewModel.searchBookmarkedMovies(user.favouriteMovies)
+
+        })
+        movieViewModel.bookmarkedMovies.observe(viewLifecycleOwner) {
+            horizontalRecyclerViewAdapter.setData(it)
+        }
+
+
+        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun setStoredProfileImage() {
+        val imageFile = File(
+            activity?.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "profilePicture.jpg"
+        )
+        if (imageFile.exists()) {
+            // Image exists, proceed to set it to the ImageView
+            Log.d("PROFILE_PICTURE", "EXISTS")
+            binding.profileImage.setImageBitmap(BitmapFactory.decodeFile(imageFile.path))
+        } else {
+            // Image doesn't exist yet, don't set it to the ImageView
+            Log.d("PROFILE_PICTURE", "DOESN'T EXIST")
+        }
+    }
+
+    override fun onMovieClick(movieId: Int) {
+        movieViewModel.movies.value?.find { it.id == movieId }?.let { movie ->
+            userViewModel.user.value?.favouriteMovies?.let { favouriteMovies ->
+                val fullScreenMovieDetail = FullscreenModalMovieBottomSheetDialog(
+                    movie,
+                    favouriteMovies.contains(movieId),
+                ) { userViewModel.saveUserFavouriteMovies(movieId) }
+                parentFragmentManager.let {
+                    fullScreenMovieDetail.show(
+                        it,
+                        "fullScreenMovieDetailDialog"
+                    )
                 }
             }
+        }
+    }
+
+    override fun onBookmarkClick(movieId: Int) {
+        userViewModel.saveUserFavouriteMovies(movieId)
     }
 }

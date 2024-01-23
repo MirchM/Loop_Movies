@@ -5,14 +5,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mmisoft.loop_movies.R
-import com.mmisoft.loop_movies.data.datamodel.RecyclerViewDataItem
+import com.mmisoft.loop_movies.data.model.remote.Movie
+import com.mmisoft.loop_movies.ui.recyclerview.RecyclerViewClickListener
+import com.mmisoft.loop_movies.ui.recyclerview.RecyclerViewDataItem
 import com.mmisoft.loop_movies.ui.recyclerview.viewholder.BaseViewHolder
 import com.mmisoft.loop_movies.ui.recyclerview.viewholder.MovieImageViewViewHolder
 import com.mmisoft.loop_movies.ui.recyclerview.viewholder.RecyclerViewButtonViewHolder
 import com.mmisoft.loop_movies.ui.recyclerview.ViewTypeResolver
 import java.lang.IllegalArgumentException
 
-class RecyclerViewHorizontalAdapter : RecyclerView.Adapter<BaseViewHolder>() {
+class RecyclerViewHorizontalAdapter(private val onRecyclerViewClickListener: RecyclerViewClickListener) :
+    RecyclerView.Adapter<BaseViewHolder>() {
 
     private val recyclerViewItems: MutableList<RecyclerViewDataItem> = mutableListOf()
 
@@ -25,12 +28,15 @@ class RecyclerViewHorizontalAdapter : RecyclerView.Adapter<BaseViewHolder>() {
 
         return when (viewType) {
             ViewTypeResolver.TYPE_POSTER_VIEW -> MovieImageViewViewHolder(
-                LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
+                LayoutInflater.from(parent.context).inflate(layoutRes, parent, false),
+                onRecyclerViewClickListener
             )
 
             ViewTypeResolver.TYPE_BUTTON -> RecyclerViewButtonViewHolder(
-                LayoutInflater.from(parent.context).inflate(layoutRes, parent, false)
+                LayoutInflater.from(parent.context).inflate(layoutRes, parent, false),
+                onRecyclerViewClickListener
             )
+
             else -> throw IllegalArgumentException("Invalid view type: $viewType")
         }
     }
@@ -51,9 +57,12 @@ class RecyclerViewHorizontalAdapter : RecyclerView.Adapter<BaseViewHolder>() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setData(data: List<RecyclerViewDataItem>) {
+    fun setData(movies: List<Movie>) {
         recyclerViewItems.clear()
-        recyclerViewItems.addAll(data)
+        for (movie in movies) {
+            recyclerViewItems.add(RecyclerViewDataItem.ImageViewItem(movie))
+        }
+        recyclerViewItems.add(RecyclerViewDataItem.ButtonItem {})
         notifyDataSetChanged()
     }
 }

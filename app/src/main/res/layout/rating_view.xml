@@ -8,6 +8,7 @@
         android:id="@+id/rating_star_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
         android:src="@drawable/rating_star_empty"
         android:contentDescription="TODO" />
 
@@ -15,6 +16,7 @@
         android:id="@+id/rating_star_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
         android:src="@drawable/rating_star_empty"
         android:contentDescription="TODO" />
 
@@ -22,6 +24,7 @@
         android:id="@+id/rating_star_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
         android:src="@drawable/rating_star_empty"
         android:contentDescription="TODO" />
 
@@ -29,6 +32,7 @@
         android:id="@+id/rating_star_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
         android:src="@drawable/rating_star_empty"
         android:contentDescription="TODO" />
 

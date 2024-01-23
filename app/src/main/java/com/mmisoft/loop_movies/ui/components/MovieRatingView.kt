@@ -10,7 +10,7 @@ import kotlin.math.roundToInt
 
 class MovieRatingView(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
 
-    private var rating : Int = 0
+    private var rating: Int = 0
     private var ratingStars = arrayListOf<ImageView>()
 
 
@@ -23,7 +23,6 @@ class MovieRatingView(context: Context, attrs: AttributeSet?) : LinearLayout(con
     init {
         initView()
     }
-
 
 
     private fun initView() {
@@ -43,21 +42,35 @@ class MovieRatingView(context: Context, attrs: AttributeSet?) : LinearLayout(con
         ratingStars.add(star5)
     }
 
-    fun setRating(rating: Double) {
+    fun setRating(rating: Double, small: Boolean = false) {
         this.rating = rating.roundToInt()
 
         for (i in 0 until this.rating) {
             val star = ratingStars[i]
-            star.setImageResource(R.drawable.rating_star_filled)
+            if (small) {
+                star.setImageResource(R.drawable.rating_star_filled_small)
+            } else {
+                star.setImageResource(R.drawable.rating_star_filled)
+            }
         }
 
         for (i in this.rating until 5) {
             val star = ratingStars[i]
-            star.setImageResource(R.drawable.rating_star_empty)
+            if (small) {
+                star.setImageResource(R.drawable.rating_star_empty_small)
+            } else {
+                star.setImageResource(R.drawable.rating_star_empty)
+            }
         }
     }
 
     private fun getStarById(starNumber: Int): ImageView {
-        return findViewById(resources.getIdentifier("rating_star_$starNumber", "id", context.packageName))
+        return findViewById(
+            resources.getIdentifier(
+                "rating_star_$starNumber",
+                "id",
+                context.packageName
+            )
+        )
     }
 }

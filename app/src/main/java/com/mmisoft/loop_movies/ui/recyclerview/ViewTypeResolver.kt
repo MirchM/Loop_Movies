@@ -1,6 +1,6 @@
 package com.mmisoft.loop_movies.ui.recyclerview
 
-import com.mmisoft.loop_movies.data.datamodel.Movie
+import com.mmisoft.loop_movies.data.model.remote.Movie
 import java.lang.IllegalArgumentException
 
 class ViewTypeResolver {

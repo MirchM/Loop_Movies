@@ -1,9 +1,11 @@
 import com.android.build.api.dsl.Packaging
 
 plugins {
+    kotlin("kapt")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -51,6 +53,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.datastore:datastore-core-android:1.1.0-beta01")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -73,7 +76,23 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
 
     //implementation("com.google.gms:google-services:4.4.0")
+
+    // Dagger-Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+
+    // Data Store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Gson
+    implementation("com.google.code.gson:gson:2.10")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
 
-
-//apply(plugin = "com.google.gms.google-services")
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
+}

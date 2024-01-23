@@ -19,8 +19,11 @@
         <TextView
             android:id="@+id/movie_fact_card_title"
             android:layout_width="wrap_content"
+            android:textSize="12sp"
+            android:fontFamily="@font/sf_pro_rounded_semibold"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
+            android:textColor="#B3141C25"
             tools:text="Budget" />
 
         <TextView
@@ -28,6 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
+            android:fontFamily="@font/sf_pro"
+            android:textSize="16sp"
             tools:text="$1.000.000" />
     </LinearLayout>
 

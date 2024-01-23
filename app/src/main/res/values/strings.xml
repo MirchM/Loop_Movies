@@ -3,7 +3,12 @@
     <string name="movie_image_placeholder_fallback">Movie Image</string>
     <string name="see_all">See all</string>
     <string name="movie_detail_screen_release_and_duration">%1$s  ·  %2$sh %3$sm</string>
-    <string name="movie_detail_screen_title_and_release_year">(%1$s)</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_screen_your_favorites">Your <b>Favorites</b></string>
+    <string name="home_screen_our_staff_pick">Our <b>Staff Pick</b></string>
+    <string name="movie_detail_screen_release_year">(%1$s)</string>
+    <string name="movie_detail_screen_overview_title">Overview</string>
+    <string name="movie_detail_screen_key_facts_title">Key Facts</string>
+    <string name="search_screen_title">All Movies</string>
+    <string name="signup_no_name_error_toast">The name field is empty</string>
 </resources>

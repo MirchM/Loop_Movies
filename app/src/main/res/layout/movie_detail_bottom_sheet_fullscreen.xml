@@ -53,7 +53,7 @@
                 <com.mmisoft.loop_movies.ui.components.MovieRatingView
                     android:id="@+id/movie_rating"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="14dp"
                     android:layout_marginTop="19dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +64,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/sf_pro_display_regular"
                     android:text="29.07.2010  ·  2h 28m"
+                    android:textColor="#99000000"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="@id/movie_item_image_view"
                     app:layout_constraintStart_toStartOf="@id/movie_item_image_view"
                     app:layout_constraintTop_toBottomOf="@id/movie_rating" />
@@ -73,22 +76,42 @@
                     android:id="@+id/movie_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Title"
-                    android:textAlignment="center"
                     android:layout_marginTop="12dp"
+                    android:fontFamily="@font/sf_pro_display_black"
+                    android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
                     android:textColor="@color/black"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/movie_release_year"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/movie_release_and_duration" />
+                    app:layout_constraintTop_toBottomOf="@id/movie_release_and_duration"
+                    tools:text="Title" />
+
+                <TextView
+                    android:id="@+id/movie_release_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/sf_pro_display_light"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+                    android:textColor="#B3141C25"
+                    android:textSize="24sp"
+                    android:textStyle=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/movie_title"
+                    app:layout_constraintTop_toTopOf="@id/movie_title"
+                    tools:text="(2000)" />
 
                 <LinearLayout
                     android:id="@+id/movie_genre_card_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
                     android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:elevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/movie_title"
@@ -99,15 +122,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"
-                    android:text="Overview"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/sf_pro_display_bold"
+                    android:text="@string/movie_detail_screen_overview_title"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/movie_genre_card_holder" />
 
                 <TextView
                     android:id="@+id/overview_body"
                     android:layout_width="0dp"
-                    android:layout_marginTop="16dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    tools:text="Overview Body"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/sf_pro_rounded_light"
+                    android:textColor="#B3141C25"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/overview_title" />
@@ -116,8 +145,10 @@
                     android:id="@+id/facts_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Key Facts"
                     android:layout_marginTop="30dp"
+                    android:text="@string/movie_detail_screen_key_facts_title"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/sf_pro_display_bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/overview_body" />
 
